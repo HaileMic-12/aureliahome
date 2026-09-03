@@ -1,0 +1,13 @@
+export { Home } from "./HomePage";
+export { RoomDetail, Rooms } from "./RoomsPage";
+export { Booking } from "./BookingPage";
+export { Restaurant } from "./RestaurantPage";
+export { RestaurantReservation } from "./RestaurantReservationPage";
+export { RoomService } from "./RoomServicePage";
+export { Events } from "./EventsPage";
+export { Gallery } from "./GalleryPage";
+export { About } from "./AboutPage";
+export { Contact } from "./ContactPage";
+export { Legal } from "./LegalPage";
+export { Admin, AdminLogin } from "./AdminPages";
+export { NotFound } from "./NotFoundPage";
