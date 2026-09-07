@@ -15,7 +15,7 @@ export function Gallery() {
       <SectionTitle
         eyebrow="Gallery"
         title="A sense of the place"
-        copy="All imagery is demonstration-only and should be replaced with licensed property photography before commercial launch."
+        copy="This demo uses bundled local imagery. Replace it with your own licensed property photography before commercial launch."
       />
       <div className="mt-8 flex flex-wrap gap-3">
         {categories.map((item) => (

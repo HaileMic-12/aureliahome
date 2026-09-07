@@ -1,3 +1,23 @@
+export const assets = {
+  homeHero: "/images/event-ballroom.webp",
+  aboutHero: "/images/room-penthouse.webp",
+  restaurantHero: "/images/restaurant-private-dining.webp",
+  gardenKing: "/images/room-garden-king.webp",
+  harborSuite: "/images/room-harbor-suite.webp",
+  terraceResidence: "/images/room-terrace-residence.webp",
+  citrusSalmon: "/images/dish-citrus-salmon.webp",
+  wildMushroomPasta: "/images/dish-wild-mushroom-pasta.webp",
+  gardenBreakfast: "/images/dish-garden-breakfast.webp",
+  privateDining: "/images/restaurant-private-dining.webp",
+  chefDish: "/images/restaurant-chef-dish.webp",
+  ballroom: "/images/event-ballroom.webp",
+  cocktailReception: "/images/event-cocktail-reception.webp",
+  orangerie: "/images/event-orangerie.webp",
+  library: "/images/venue-library.webp",
+  gardenSuite: "/images/room-garden-suite.webp",
+  penthouse: "/images/room-penthouse.webp",
+};
+
 export const site = {
   name: "Aurelia House",
   shortName: "Aurelia",
@@ -49,8 +69,7 @@ export const rooms = [
     size: "34 m²",
     featured: true,
     availability: true,
-    image:
-      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1600&q=80",
+    image: assets.gardenKing,
     description:
       "An unhurried retreat with soft linen, warm oak, and garden light.",
     amenities: ["King bed", "Rain shower", "Wi‑Fi", "Nespresso"],
@@ -65,8 +84,7 @@ export const rooms = [
     size: "54 m²",
     featured: true,
     availability: true,
-    image:
-      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+    image: assets.harborSuite,
     description:
       "A generous suite with a separate salon and an outlook over the water.",
     amenities: ["Separate salon", "Soaking tub", "Wi‑Fi", "Breakfast option"],
@@ -81,8 +99,7 @@ export const rooms = [
     size: "92 m²",
     featured: false,
     availability: true,
-    image:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=80",
+    image: assets.terraceResidence,
     description:
       "A private two-bedroom residence for families and longer stays.",
     amenities: [
@@ -101,8 +118,7 @@ export const menu = [
     name: "Citrus salmon",
     price: 34,
     featured: true,
-    image:
-      "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1000&q=80",
+    image: assets.citrusSalmon,
     description: "Charred citrus, fennel, and olive oil potatoes.",
   },
   {
@@ -110,8 +126,7 @@ export const menu = [
     category: "Dinner",
     name: "Wild mushroom pappardelle",
     price: 28,
-    image:
-      "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=1000&q=80",
+    image: assets.wildMushroomPasta,
     description: "Hand-cut pasta, woodland mushrooms, aged pecorino.",
   },
   {
@@ -119,18 +134,16 @@ export const menu = [
     category: "Breakfast",
     name: "Garden breakfast",
     price: 22,
-    image:
-      "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=1000&q=80",
+    image: assets.gardenBreakfast,
     description: "Eggs, baked sourdough, fruit, and pressed juice.",
   },
   {
-    id: "spiced-coffee",
-    category: "Drinks",
-    name: "Spiced house coffee",
-    price: 7,
-    image:
-      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=80",
-    description: "Small-batch roast with warm spices and orange peel.",
+    id: "chef-selection",
+    category: "Dinner",
+    name: "Chef's seasonal selection",
+    price: 38,
+    image: assets.chefDish,
+    description: "A considered seasonal plate, prepared to order.",
   },
 ];
 
@@ -146,8 +159,7 @@ export const events = [
     category: "Celebrations",
     capacity: "Up to 130 guests",
     price: 1800,
-    image:
-      "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1400&q=80",
+    image: assets.orangerie,
     description:
       "A light-filled room for weddings, gala dinners, and unforgettable tables.",
   },
@@ -157,21 +169,19 @@ export const events = [
     category: "Meetings",
     capacity: "Up to 24 guests",
     price: 650,
-    image:
-      "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=1400&q=80",
+    image: assets.library,
     description:
       "A focused, intimate setting for teams that need to think clearly.",
   },
   {
-    id: "courtyard",
-    name: "The Courtyard",
-    category: "Open air",
-    capacity: "Up to 90 guests",
-    price: 1100,
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1400&q=80",
+    id: "ballroom",
+    name: "The Grand Ballroom",
+    category: "Celebrations",
+    capacity: "Up to 180 guests",
+    price: 1800,
+    image: assets.ballroom,
     description:
-      "An atmospheric outdoor venue for sunset receptions and social occasions.",
+      "A chandelier-lit ballroom for grand receptions, gala dinners, and celebrations.",
   },
 ];
 
@@ -186,8 +196,7 @@ export const gallery = [
     id: "gallery-2",
     category: "Dining",
     alt: "A considered dinner setting",
-    image:
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+    image: assets.privateDining,
   },
   {
     id: "gallery-3",
@@ -199,7 +208,7 @@ export const gallery = [
     id: "gallery-4",
     category: "Stay",
     alt: "A spacious suite",
-    image: rooms[1].image,
+    image: assets.penthouse,
   },
   {
     id: "gallery-5",
@@ -211,7 +220,13 @@ export const gallery = [
     id: "gallery-6",
     category: "Spaces",
     alt: "Outdoor celebration details",
-    image: events[2].image,
+    image: assets.cocktailReception,
+  },
+  {
+    id: "gallery-7",
+    category: "Stay",
+    alt: "A bright, relaxed suite",
+    image: assets.gardenSuite,
   },
 ];
 

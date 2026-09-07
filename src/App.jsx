@@ -1,26 +1,38 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import { FeedbackProvider } from "./components/Feedback";
 import { AppErrorBoundary } from "./components/AppErrorBoundary";
 import { Layout } from "./components/Layout";
-import {
-  About,
-  Admin,
-  AdminLogin,
-  Booking,
-  Contact,
-  Events,
-  Gallery,
-  Home,
-  Legal,
-  NotFound,
-  Restaurant,
-  RestaurantReservation,
-  RoomDetail,
-  Rooms,
-  RoomService,
-} from "./pages";
+
+const lazyPage = (load, name) => lazy(() => load().then((module) => ({ default: module[name] })));
+
+const Home = lazyPage(() => import("./pages/HomePage"), "Home");
+const Rooms = lazyPage(() => import("./pages/RoomsPage"), "Rooms");
+const RoomDetail = lazyPage(() => import("./pages/RoomsPage"), "RoomDetail");
+const Booking = lazyPage(() => import("./pages/BookingPage"), "Booking");
+const Restaurant = lazyPage(() => import("./pages/RestaurantPage"), "Restaurant");
+const RestaurantReservation = lazyPage(
+  () => import("./pages/RestaurantReservationPage"),
+  "RestaurantReservation",
+);
+const RoomService = lazyPage(() => import("./pages/RoomServicePage"), "RoomService");
+const Events = lazyPage(() => import("./pages/EventsPage"), "Events");
+const Gallery = lazyPage(() => import("./pages/GalleryPage"), "Gallery");
+const About = lazyPage(() => import("./pages/AboutPage"), "About");
+const Contact = lazyPage(() => import("./pages/ContactPage"), "Contact");
+const Legal = lazyPage(() => import("./pages/LegalPage"), "Legal");
+const AdminLogin = lazyPage(() => import("./pages/AdminPages"), "AdminLogin");
+const Admin = lazyPage(() => import("./pages/AdminPages"), "Admin");
+const NotFound = lazyPage(() => import("./pages/NotFoundPage"), "NotFound");
+
+function PageLoader() {
+  return (
+    <div className="grid min-h-[45vh] place-items-center px-5" role="status" aria-live="polite">
+      <p className="text-sm text-stone-400">Loading page…</p>
+    </div>
+  );
+}
 
 function ScrollTop() {
   const { pathname } = useLocation();
@@ -39,8 +51,9 @@ export default function App() {
         <BrowserRouter>
           <AppErrorBoundary>
             <ScrollTop />
-            <Routes>
-              <Route element={<Layout />}>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/rooms" element={<Rooms />} />
                 <Route path="/rooms/:roomId" element={<RoomDetail />} />
@@ -60,8 +73,9 @@ export default function App() {
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
+                </Route>
+              </Routes>
+            </Suspense>
           </AppErrorBoundary>
         </BrowserRouter>
       </FeedbackProvider>

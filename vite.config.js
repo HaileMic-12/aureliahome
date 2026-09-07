@@ -8,8 +8,16 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        manualChunks: (id) =>
-          id.includes("node_modules/firebase") ? "firebase" : undefined,
+        manualChunks: (id) => {
+          if (id.includes("node_modules/@firebase/firestore") || id.includes("node_modules/firebase/firestore")) {
+            return "firebase-firestore";
+          }
+          if (id.includes("node_modules/@firebase/auth") || id.includes("node_modules/firebase/auth")) {
+            return "firebase-auth";
+          }
+          if (id.includes("node_modules/@firebase")) return "firebase-core";
+          return undefined;
+        },
       },
     },
   },

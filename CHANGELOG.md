@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.3 — 2026-09-07
+
+- Added 17 optimized local WebP hotel, dining, room, and event image assets.
+- Replaced public-site remote demo images with centralized local asset paths.
+- Added a polished 1920×1080 marketplace thumbnail.
+- Added Vercel SPA rewrites for direct route visits.
+
+## 1.0.2 — 2026-09-01
+
+- Split public pages into on-demand chunks to reduce initial JavaScript loading.
+- Split Firebase runtime code into core, Authentication, and Firestore chunks.
+- Removed the production-build chunk-size warning without raising the warning threshold.
+
 ## 1.0.1 — 2026-09-01
 
 - Fixed split-page runtime imports in the admin and booking routes.

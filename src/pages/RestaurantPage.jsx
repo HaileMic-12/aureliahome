@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { menu, money, site } from "../config/site";
+import { assets, menu, money, site } from "../config/site";
 import { Hero, card } from "./shared";
 
 export function Restaurant() {
@@ -16,7 +16,7 @@ export function Restaurant() {
         eyebrow="Dining"
         title={site.restaurant.name}
         copy={site.restaurant.description}
-        image="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=2000&q=80"
+        image={assets.restaurantHero}
       >
         <Link
           to="/restaurant/reservation"

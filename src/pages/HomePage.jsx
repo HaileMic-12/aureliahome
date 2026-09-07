@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { rooms, site, testimonials } from "../config/site";
+import { assets, rooms, site, testimonials } from "../config/site";
 import { Hero, SectionTitle, card } from "./shared";
 import { RoomCard } from "./RoomsPage";
 
@@ -10,7 +10,7 @@ export function Home() {
         eyebrow="Independent hotel template"
         title={site.tagline}
         copy="A polished starting point for distinctive hotels, resorts, restaurants, and event venues."
-        image="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=80"
+        image={assets.homeHero}
       >
         <div className="mt-9 flex flex-wrap gap-4">
           <Link

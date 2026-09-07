@@ -1,3 +1,4 @@
+import { assets } from "../config/site";
 import { Hero, card } from "./shared";
 
 export function About() {
@@ -7,7 +8,7 @@ export function About() {
         eyebrow="About the template"
         title="Built to be made your own"
         copy="Aurelia House is neutral demo content, designed to be replaced—not mistaken for a real hotel or endorsement."
-        image="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1800&q=80"
+        image={assets.aboutHero}
       />
       <section className="mx-auto grid max-w-7xl gap-8 px-5 py-20 md:grid-cols-3">
         {[

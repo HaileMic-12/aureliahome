@@ -7,7 +7,7 @@ Edit only `src/config/site.js` for routine buyer customization:
 - `menu` and `roomServiceMenu`: restaurant and room-service catalog.
 - `events`, `gallery`, `testimonials`, and `policies`: public content.
 
-Replace every remote demo image with a licensed asset before release. Components consume this file, so a rebrand does not require searching pages.
+Bundled image paths are centralized in the `assets` object at the top of `src/config/site.js`; image files live in `public/images/`. Replace them with properly licensed property photography before release. Components consume this file, so a rebrand does not require searching pages.
 
 ## Source layout
 
