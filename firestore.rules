@@ -1,19 +1,72 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() { return request.auth != null; }
-    function admin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
-    function validText(value, max) { return value is string && value.size() > 0 && value.size() <= max; }
-    match /admins/{id} {
-      allow read: if signedIn() && request.auth.uid == id;
-      allow write: if admin();
+
+    // Helper function to verify staff access
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
-    match /rooms/{id} { allow read: if true; allow write: if admin(); }
-    match /bookings/{id} { allow create: if validText(request.resource.data.email, 254) && validText(request.resource.data.firstName, 80) && request.resource.data.status == 'pending'; allow read, update, delete: if admin(); }
-    match /restaurantReservations/{id} { allow create: if validText(request.resource.data.email, 254) && validText(request.resource.data.name, 120) && request.resource.data.status == 'pending'; allow read, update, delete: if admin(); }
-    match /roomServiceOrders/{id} { allow create: if validText(request.resource.data.name, 120) && validText(request.resource.data.roomNumber, 30) && request.resource.data.status == 'pending'; allow read, update, delete: if admin(); }
-    match /eventInquiries/{id} { allow create: if validText(request.resource.data.email, 254) && validText(request.resource.data.name, 120) && request.resource.data.status == 'new'; allow read, update, delete: if admin(); }
-    match /messages/{id} { allow create: if validText(request.resource.data.email, 254) && validText(request.resource.data.message, 2000) && request.resource.data.status == 'new'; allow read, update, delete: if admin(); }
-    match /newsletterSubscribers/{id} { allow create: if validText(request.resource.data.email, 254) && request.resource.data.status == 'active'; allow read, update, delete: if admin(); }
+
+    // Admins registry: only authenticated admins can inspect
+    match /admins/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false; // Provisioned directly in Firebase console
+    }
+
+    // Public tracking allows guests to read their own status and create new ones
+    match /publicTracking/{reference} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // Guest submissions (Open for creation, locked for everything else)
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /roomServiceOrders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /bookings/{bookingId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /restaurantReservations/{resId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /eventInquiries/{inquiryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /messages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /newsletterSubscribers/{subId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Public Catalogs (Viewable by everyone, editable by admins)
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /foods/{foodId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }

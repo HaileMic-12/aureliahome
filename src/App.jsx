@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, Outlet } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import { FeedbackProvider } from "./components/Feedback";
 import { AppErrorBoundary } from "./components/AppErrorBoundary";
@@ -26,6 +26,9 @@ const AdminLogin = lazyPage(() => import("./pages/AdminPages"), "AdminLogin");
 const Admin = lazyPage(() => import("./pages/AdminPages"), "Admin");
 const NotFound = lazyPage(() => import("./pages/NotFoundPage"), "NotFound");
 
+// Import the new Tracking page
+const Track = lazyPage(() => import("./pages/TrackPage"), "Track");
+
 function PageLoader() {
   return (
     <div className="grid min-h-[45vh] place-items-center px-5" role="status" aria-live="polite">
@@ -44,6 +47,15 @@ function ScrollTop() {
   return null;
 }
 
+// Clean layout for Admin pages (No public Header/Footer)
+function AdminLayout() {
+  return (
+    <div className="min-h-screen bg-stone-950">
+      <Outlet /> 
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -53,27 +65,38 @@ export default function App() {
             <ScrollTop />
             <Suspense fallback={<PageLoader />}>
               <Routes>
+                
+                {/* === PUBLIC CUSTOMER PAGES (With Header/Footer) === */}
                 <Route element={<Layout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/rooms" element={<Rooms />} />
-                <Route path="/rooms/:roomId" element={<RoomDetail />} />
-                <Route path="/book" element={<Booking />} />
-                <Route path="/restaurant" element={<Restaurant />} />
-                <Route
-                  path="/restaurant/reservation"
-                  element={<RestaurantReservation />}
-                />
-                <Route path="/room-service" element={<RoomService />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/gallery" element={<Gallery />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/privacy" element={<Legal kind="privacy" />} />
-                <Route path="/terms" element={<Legal kind="terms" />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="*" element={<NotFound />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/rooms" element={<Rooms />} />
+                  <Route path="/rooms/:roomId" element={<RoomDetail />} />
+                  <Route path="/book" element={<Booking />} />
+                  <Route path="/restaurant" element={<Restaurant />} />
+                  <Route
+                    path="/restaurant/reservation"
+                    element={<RestaurantReservation />}
+                  />
+                  <Route path="/room-service" element={<RoomService />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/gallery" element={<Gallery />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/privacy" element={<Legal kind="privacy" />} />
+                  <Route path="/terms" element={<Legal kind="terms" />} />
+                  
+                  {/* The new tracking route */}
+                  <Route path="/track" element={<Track />} />
+                  
+                  <Route path="*" element={<NotFound />} />
                 </Route>
+
+                {/* === ADMIN PAGES (No Header/Footer) === */}
+                <Route element={<AdminLayout />}>
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route path="/admin" element={<Admin />} />
+                </Route>
+
               </Routes>
             </Suspense>
           </AppErrorBoundary>

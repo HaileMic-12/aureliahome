@@ -1,86 +1,91 @@
 import { Link } from "react-router-dom";
 import { assets, rooms, site, testimonials } from "../config/site";
-import { Hero, SectionTitle, card } from "./shared";
+import { Hero, SectionTitle, STYLES, Button } from "./shared";
 import { RoomCard } from "./RoomsPage";
 
+// Extracted static configurations outside the component to prevent reallocation on every render
+const PROPERTY_FEATURES = [
+  {
+    title: "Thoughtful stays",
+    copy: "A flexible room catalog, practical pricing, and an intuitive guest booking flow.",
+  },
+  {
+    title: "Seasonal dining",
+    copy: "A configurable restaurant menu, real-time table reservations, and in-room dining integration.",
+  },
+  {
+    title: "Gather well",
+    copy: "Distinctive event spaces with a dedicated inquiry and management workflow.",
+  },
+];
+
 export function Home() {
+  const featuredRooms = rooms.filter((room) => room.featured);
+
   return (
     <>
       <Hero
-        eyebrow="Independent hotel template"
-        title={site.tagline}
-        copy="A polished starting point for distinctive hotels, resorts, restaurants, and event venues."
+        eyebrow="Boutique Hospitality Platform"
+        title={site.tagline || "Welcome to Aurelia"}
+        copy="A sophisticated digital presence for distinctive hotels, premium resorts, and exclusive event venues."
         image={assets.homeHero}
       >
         <div className="mt-9 flex flex-wrap gap-4">
-          <Link
-            to="/book"
-            className="rounded-xl bg-amber-400 px-6 py-3 font-bold text-stone-950 hover:bg-amber-300"
-          >
-            Plan a stay
+          <Link to="/book">
+            <Button variant="primary">Plan a stay</Button>
           </Link>
-          <Link
-            to="/rooms"
-            className="rounded-xl border border-white/20 px-6 py-3 font-semibold text-white hover:bg-white/10"
-          >
-            Explore rooms
+          <Link to="/rooms">
+            <Button variant="outline">Explore rooms</Button>
           </Link>
         </div>
       </Hero>
+
       <section className="mx-auto grid max-w-7xl gap-6 px-5 py-20 md:grid-cols-3">
-        {[
-          [
-            "Thoughtful stays",
-            "A flexible room catalog, practical pricing, and an honest booking flow.",
-          ],
-          [
-            "Seasonal dining",
-            "A configurable restaurant, reservations, and room-service ordering.",
-          ],
-          [
-            "Gather well",
-            "Distinctive event spaces with a real inquiry workflow.",
-          ],
-        ].map(([title, copy]) => (
-          <article className={`${card} p-7`} key={title}>
+        {PROPERTY_FEATURES.map(({ title, copy }) => (
+          <article className={`${STYLES.card} p-8`} key={title}>
             <h2 className="font-serif text-2xl text-white">{title}</h2>
-            <p className="mt-3 leading-7 text-stone-400">{copy}</p>
+            <p className="mt-4 leading-relaxed text-stone-400">{copy}</p>
           </article>
         ))}
       </section>
-      <section className="bg-stone-900/60 py-20">
+
+      <section className="border-y border-white/5 bg-stone-900/40 py-24">
         <div className="mx-auto max-w-7xl px-5">
-          <div className="flex flex-wrap items-end justify-between gap-5">
+          <div className="flex flex-wrap items-end justify-between gap-6">
             <SectionTitle
               eyebrow="Accommodation"
               title="Designed for deep rest"
             />
-            <Link className="text-amber-300 hover:text-amber-200" to="/rooms">
-              All rooms →
+            <Link 
+              className="group flex items-center text-sm font-semibold text-amber-400 transition-colors hover:text-amber-300" 
+              to="/rooms"
+            >
+              View all rooms 
+              <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {rooms
-              .filter((room) => room.featured)
-              .map((room) => (
-                <RoomCard room={room} key={room.id} />
-              ))}
+          <div className="mt-12 grid gap-8 lg:grid-cols-3">
+            {featuredRooms.map((room) => (
+              <RoomCard room={room} key={room.id} />
+            ))}
           </div>
         </div>
       </section>
-      <section className="mx-auto max-w-7xl px-5 py-20">
+
+      <section className="mx-auto max-w-7xl px-5 py-24">
         <SectionTitle
-          eyebrow="Guest notes"
+          eyebrow="Guest Notes"
           title="The details make the stay"
           align="center"
         />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {testimonials.map((item) => (
-            <blockquote key={item.name} className={`${card} p-7`}>
-              <p className="text-lg leading-8 text-stone-200">“{item.quote}”</p>
-              <footer className="mt-5 text-sm text-amber-200">
-                {item.name}{" "}
-                <span className="text-stone-500">· {item.context}</span>
+        <div className="mt-12 grid gap-8 md:grid-cols-3">
+          {testimonials.map((item, index) => (
+            <blockquote key={index} className={`${STYLES.card} flex flex-col justify-between p-8`}>
+              <p className="text-lg leading-relaxed text-stone-200">
+                &ldquo;{item.quote}&rdquo;
+              </p>
+              <footer className="mt-8 border-t border-white/10 pt-4 text-sm font-medium text-amber-400">
+                {item.name} <span className="mx-2 text-stone-600">|</span> <span className="font-normal text-stone-400">{item.context}</span>
               </footer>
             </blockquote>
           ))}

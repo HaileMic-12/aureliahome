@@ -3,154 +3,193 @@ import { useFeedback } from "../components/Feedback";
 import { createRecord } from "../services/records";
 import {
   Button,
-  card,
+  STYLES,
   Confirmation,
   Field,
-  input,
   SectionTitle,
   today,
 } from "./shared";
 
+const INITIAL_FORM_STATE = {
+  name: "",
+  email: "",
+  phone: "",
+  date: "",
+  time: "19:00",
+  guests: 2,
+  seating: "No preference",
+  requests: "",
+};
+
 export function RestaurantReservation() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    date: "",
-    time: "19:00",
-    guests: 2,
-    seating: "No preference",
-    requests: "",
-  });
+  const [form, setForm] = useState(INITIAL_FORM_STATE);
   const [busy, setBusy] = useState(false);
-  const [ref, setRef] = useState("");
+  const [reference, setReference] = useState("");
   const { notify } = useFeedback();
-  const change = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const submit = async (e) => {
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (form.date < today) {
-      notify("error", "Choose a future reservation date.");
-      return;
+      return notify("error", "Please select a future reservation date.");
     }
+    
+    if (form.phone.trim().length < 7) {
+      return notify("error", "Please enter a valid phone number.");
+    }
+
     setBusy(true);
     try {
-      const id = await createRecord("restaurantReservations", {
+      const recordId = await createRecord("restaurantReservations", {
         ...form,
         status: "pending",
       });
-      setRef(`TABLE-${id.slice(0, 8).toUpperCase()}`);
-      notify("success", "Table request received.");
+      
+      // Professional ID generation: DINE-YYYYMMDD-ID
+      const dateString = form.date.replace(/-/g, "");
+      setReference(`DINE-${dateString}-${recordId.slice(0, 4).toUpperCase()}`);
+      notify("success", "Table request securely submitted.");
     } catch (error) {
-      notify("error", error.message);
+      notify("error", error.message || "Failed to submit reservation.");
     } finally {
       setBusy(false);
     }
   };
-  return ref ? (
-    <Confirmation
-      title="Table request received"
-      reference={ref}
-      copy="Your table is requested, not confirmed. The restaurant team will review availability."
-    />
-  ) : (
-    <section className="mx-auto max-w-3xl px-5 py-16">
-      <SectionTitle
-        eyebrow="Restaurant reservations"
-        title="Save your table"
-        copy="A reservation is confirmed only after the restaurant team accepts it."
+
+  if (reference) {
+    return (
+      <Confirmation
+        title="Table Request Received"
+        reference={reference}
+        copy="Your reservation request has been sent to our Maitre D'. We will review availability and send a final confirmation to your email shortly."
       />
+    );
+  }
+
+  return (
+    <section className="mx-auto max-w-4xl px-5 py-16 md:py-24">
+      <div className="text-center">
+        <SectionTitle
+          eyebrow="Dining Reservations"
+          title="Secure Your Table"
+          copy="Join us for an exceptional dining experience. Please note that reservations are subject to final confirmation by our restaurant team."
+          align="center"
+        />
+      </div>
+
       <form
-        onSubmit={submit}
-        className={`${card} mt-9 grid gap-5 p-6 md:grid-cols-2`}
+        onSubmit={handleSubmit}
+        className={`${STYLES.card} mt-12 grid gap-6 p-8 md:grid-cols-2 md:p-10`}
       >
-        <Field label="Full name">
+        <Field label="Full Name">
           <input
-            className={input}
+            className={STYLES.input}
             required
             name="name"
             value={form.name}
-            onChange={change}
+            onChange={handleInputChange}
+            placeholder="Jane Doe"
           />
         </Field>
-        <Field label="Email">
+
+        <Field label="Email Address">
           <input
-            className={input}
+            className={STYLES.input}
             required
             type="email"
             name="email"
             value={form.email}
-            onChange={change}
+            onChange={handleInputChange}
+            placeholder="jane@example.com"
           />
         </Field>
-        <Field label="Phone">
+
+        <Field label="Phone Number">
           <input
-            className={input}
+            className={STYLES.input}
             required
             type="tel"
             name="phone"
             value={form.phone}
-            onChange={change}
+            onChange={handleInputChange}
+            placeholder="+1 (555) 000-0000"
           />
         </Field>
-        <Field label="Guests">
+
+        <Field label="Number of Guests">
           <input
-            className={input}
+            className={STYLES.input}
             required
             min="1"
             max="20"
             type="number"
             name="guests"
             value={form.guests}
-            onChange={change}
+            onChange={handleInputChange}
           />
         </Field>
-        <Field label="Date">
+
+        <Field label="Reservation Date">
           <input
-            className={input}
+            className={STYLES.input}
             required
             min={today}
             type="date"
             name="date"
             value={form.date}
-            onChange={change}
+            onChange={handleInputChange}
           />
         </Field>
+
         <Field label="Time">
           <input
-            className={input}
+            className={STYLES.input}
             required
             type="time"
             name="time"
             value={form.time}
-            onChange={change}
+            onChange={handleInputChange}
+            step="900" 
           />
         </Field>
-        <Field label="Seating">
+
+        <Field label="Seating Preference" className="md:col-span-2">
           <select
-            className={input}
+            className={STYLES.input}
             name="seating"
             value={form.seating}
-            onChange={change}
+            onChange={handleInputChange}
           >
-            <option>No preference</option>
-            <option>Dining room</option>
-            <option>Terrace</option>
-            <option>Window table</option>
+            <option>No Preference</option>
+            <option>Main Dining Room</option>
+            <option>Outdoor Terrace</option>
+            <option>Window Seating</option>
+            <option>Bar Area</option>
           </select>
         </Field>
-        <Field label="Requests">
+
+        <Field label="Special Requests or Dietary Restrictions" className="md:col-span-2">
           <textarea
-            className={input}
+            className={STYLES.input}
             maxLength="1000"
-            rows="3"
+            rows="4"
             name="requests"
             value={form.requests}
-            onChange={change}
+            onChange={handleInputChange}
+            placeholder="Please let us know if you are celebrating a special occasion or have any food allergies..."
           />
         </Field>
-        <Button className="md:col-span-2" disabled={busy}>
-          {busy ? "Sending request…" : "Request a table"}
-        </Button>
+
+        <div className="md:col-span-2 md:mt-4">
+          <Button variant="primary" className="w-full" disabled={busy}>
+            {busy ? "Processing Request..." : "Request Reservation"}
+          </Button>
+        </div>
       </form>
     </section>
   );

@@ -1,43 +1,47 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { money, rooms } from "../config/site";
-import { Hero, card } from "./shared";
+import { Hero, STYLES, Button } from "./shared";
 
 export function RoomCard({ room }) {
   return (
-    <article className={`${card} overflow-hidden`}>
-      <img
-        src={room.image}
-        alt={room.name}
-        className="h-64 w-full object-cover"
-        loading="lazy"
-      />
-      <div className="p-6">
+    <article className={`${STYLES.card} group flex flex-col overflow-hidden`}>
+      <div className="relative overflow-hidden">
+        <img
+          src={room.image}
+          alt={room.name}
+          className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      </div>
+      <div className="flex flex-1 flex-col p-6 lg:p-8">
         <div className="flex items-start justify-between gap-4">
           <h2 className="font-serif text-2xl text-white">{room.name}</h2>
-          <strong className="whitespace-nowrap text-amber-200">
-            {money(room.price)}
-            <span className="text-xs font-normal text-stone-400"> / night</span>
-          </strong>
+          <div className="flex flex-col items-end">
+            <strong className="text-lg text-amber-400">{money(room.price)}</strong>
+            <span className="text-xs font-normal text-stone-400">per night</span>
+          </div>
         </div>
-        <p className="mt-3 text-sm leading-6 text-stone-400">
+        <p className="mt-4 flex-1 text-sm leading-relaxed text-stone-400">
           {room.description}
         </p>
-        <p className="mt-4 text-sm text-stone-300">
-          {room.capacity} guests · {room.bed}
-        </p>
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-wider text-stone-300">
+          <span>{room.capacity} guests</span>
+          <span className="h-1 w-1 rounded-full bg-stone-600" aria-hidden="true"></span>
+          <span>{room.bed}</span>
+        </div>
+        <div className="mt-8 flex items-center gap-4 border-t border-white/10 pt-6">
           <Link
             to={`/rooms/${room.id}`}
-            className="text-sm font-semibold text-amber-200 hover:text-amber-100"
+            className="flex-1 text-center text-sm font-semibold text-white transition-colors hover:text-amber-400"
           >
-            Details
+            View Details
           </Link>
-          <Link
-            to={`/book?room=${room.id}`}
-            className="text-sm font-semibold text-white hover:text-amber-200"
-          >
-            Book →
+          <Link to={`/book?room=${room.id}`} className="flex-1">
+            <Button variant="primary" className="w-full py-2.5 text-sm">
+              Book Now
+            </Button>
           </Link>
         </div>
       </div>
@@ -47,30 +51,36 @@ export function RoomCard({ room }) {
 
 export function Rooms() {
   const [filter, setFilter] = useState("All");
-  const categories = ["All", ...new Set(rooms.map((room) => room.category))];
-  const listing =
-    filter === "All" ? rooms : rooms.filter((room) => room.category === filter);
+  
+  // Memoize data derived from state/config to prevent unnecessary recalculations during renders
+  const categories = useMemo(() => ["All", ...new Set(rooms.map((room) => room.category))], []);
+  const listing = useMemo(() => filter === "All" ? rooms : rooms.filter((room) => room.category === filter), [filter]);
+
   return (
     <>
       <Hero
-        eyebrow="Rooms & suites"
+        eyebrow="Rooms & Suites"
         title="Spaces with a sense of place"
-        copy="Replace the room catalog in one data file; cards, booking choices, and detail pages stay in sync."
-        image={rooms[1].image}
+        copy="Explore our collection of thoughtfully designed accommodations, blending modern comfort with timeless elegance."
+        image={rooms[1]?.image}
       />
-      <section className="mx-auto max-w-7xl px-5 py-20">
-        <div className="flex flex-wrap gap-3" aria-label="Room categories">
+      <section className="mx-auto max-w-7xl px-5 py-24">
+        <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start" aria-label="Filter rooms by category">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setFilter(category)}
-              className={`rounded-full px-4 py-2 text-sm ${filter === category ? "bg-amber-400 font-bold text-stone-950" : "border border-white/15 text-stone-300 hover:bg-white/5"}`}
+              className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
+                filter === category 
+                  ? "bg-amber-400 text-stone-950 shadow-md shadow-amber-400/20" 
+                  : "border border-white/15 text-stone-300 hover:border-amber-400/50 hover:bg-white/5 hover:text-white"
+              }`}
             >
               {category}
             </button>
           ))}
         </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {listing.map((room) => (
             <RoomCard room={room} key={room.id} />
           ))}
@@ -82,61 +92,69 @@ export function Rooms() {
 
 export function RoomDetail() {
   const { roomId } = useParams();
-  const room = rooms.find((item) => item.id === roomId);
+  const room = useMemo(() => rooms.find((item) => item.id === roomId), [roomId]);
+  
   if (!room) return <Navigate to="/rooms" replace />;
+  
   return (
-    <section className="mx-auto max-w-7xl px-5 py-12 md:py-20">
-      <div className="grid gap-10 lg:grid-cols-2">
-        <img
-          src={room.image}
-          alt={room.name}
-          className="h-[460px] w-full rounded-3xl object-cover"
-        />
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[.25em] text-amber-300">
+    <section className="mx-auto max-w-7xl px-5 py-16 md:py-24">
+      <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+          <img
+            src={room.image}
+            alt={room.name}
+            className="h-[500px] w-full object-cover transition-transform duration-700 hover:scale-105"
+          />
+          <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
+        </div>
+        
+        <div className="flex flex-col justify-center">
+          <p className="text-sm font-bold uppercase tracking-[.2em] text-amber-400">
             {room.category}
           </p>
-          <h1 className="mt-3 font-serif text-5xl text-white">{room.name}</h1>
-          <p className="mt-6 text-lg leading-8 text-stone-300">
+          <h1 className="mt-4 font-serif text-4xl text-white md:text-5xl">{room.name}</h1>
+          <p className="mt-6 text-lg leading-relaxed text-stone-300">
             {room.description}
           </p>
-          <div
-            className={`${card} mt-8 grid grid-cols-2 gap-4 p-6 text-sm text-stone-300`}
-          >
-            <span>
-              From{" "}
-              <strong className="block text-xl text-amber-200">
-                {money(room.price)}
-              </strong>{" "}
-              per night
-            </span>
-            <span>
-              Size{" "}
-              <strong className="block text-xl text-white">{room.size}</strong>
-            </span>
-            <span>
-              Capacity{" "}
-              <strong className="block text-xl text-white">
-                {room.capacity} guests
-              </strong>
-            </span>
-            <span>
-              Bed{" "}
-              <strong className="block text-xl text-white">{room.bed}</strong>
-            </span>
+          
+          <div className={`${STYLES.card} mt-10 grid grid-cols-2 gap-y-6 gap-x-4 p-8 text-sm text-stone-400`}>
+            <div>
+              <span className="mb-1 block text-xs uppercase tracking-wider">Starting from</span>
+              <strong className="text-2xl font-normal text-amber-400">{money(room.price)}</strong>
+              <span className="ml-1">/ night</span>
+            </div>
+            <div>
+              <span className="mb-1 block text-xs uppercase tracking-wider">Room Size</span>
+              <strong className="text-xl font-normal text-white">{room.size}</strong>
+            </div>
+            <div>
+              <span className="mb-1 block text-xs uppercase tracking-wider">Capacity</span>
+              <strong className="text-xl font-normal text-white">{room.capacity} guests</strong>
+            </div>
+            <div>
+              <span className="mb-1 block text-xs uppercase tracking-wider">Bed Type</span>
+              <strong className="text-xl font-normal text-white">{room.bed}</strong>
+            </div>
           </div>
-          <h2 className="mt-8 font-serif text-2xl text-white">Included</h2>
-          <ul className="mt-4 grid grid-cols-2 gap-3 text-sm text-stone-300">
-            {room.amenities.map((item) => (
-              <li key={item}>✓ {item}</li>
-            ))}
-          </ul>
-          <Link
-            to={`/book?room=${room.id}`}
-            className="mt-9 inline-block rounded-xl bg-amber-400 px-6 py-3 font-bold text-stone-950 hover:bg-amber-300"
-          >
-            Check availability
-          </Link>
+          
+          <div className="mt-10">
+            <h2 className="border-b border-white/10 pb-4 font-serif text-2xl text-white">Amenities & Features</h2>
+            <ul className="mt-6 grid grid-cols-2 gap-4 text-sm text-stone-300">
+              {room.amenities.map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <span className="text-amber-400" aria-hidden="true">✓</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div className="mt-12 border-t border-white/10 pt-8">
+            <Link to={`/book?room=${room.id}`}>
+              <Button variant="primary" className="w-full px-10 md:w-auto">
+                Check Availability
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
